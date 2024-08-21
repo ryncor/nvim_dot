@@ -51,6 +51,7 @@ require("lazy").setup({
   	transparent = true,
  },
 
+ {"oahlen/iceberg.nvim"},
 
   {
     "nvim-treesitter/nvim-treesitter",
@@ -58,11 +59,26 @@ require("lazy").setup({
     config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = { "c", "lua", "python", "javascript" },
+		auto_install = true,
         highlight = {
-          enable = true,              -- false will disable the whole extension
+          enable = true,             
           additional_vim_regex_highlighting = false,
         },
       }
+    end
+  },
+
+ {
+    'nvim-telescope/telescope.nvim', tag = '0.1.8',
+    dependencies = {'nvim-lua/plenary.nvim'},
+    config = function()
+      local builtin = require('telescope.builtin')
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find files' })
+      vim.keymap.set('n', '<leader>fl', builtin.live_grep, { desc = 'Live grep' })
+	  vim.keymap.set('n', '<leader>fg', builtin.git_files, { desc = 'Git grep' })
+	  vim.keymap.set('n', '<leader>fs', function()
+	  	builtin.grep_string({ search = vim.fn.input("Grep > ") });
+	  end)
     end
   },
 
@@ -82,6 +98,13 @@ require("lazy").setup({
   },
 
   {
+	  'mbbill/undotree',
+	  config = function()
+		  vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+	  end
+  },
+
+  {
     "neovim/nvim-lspconfig",
     config = function()
 	      local on_attach = function(client, bufnr)
@@ -90,7 +113,7 @@ require("lazy").setup({
         
         buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
         buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-        buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+        buf_set_keymap('n', 'gm', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
         buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
         buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
         buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -115,17 +138,17 @@ require("lazy").setup({
 -- Configure LSP diagnostics to disable warning signs
 vim.diagnostic.config({
   signs = false,
-  virtual_text = true, -- or false, depending on your preference
-  underline = true,
+  virtual_text = true, -- or false, depending on your preference underline = true,
   update_in_insert = false,
   severity_sort = true,
 })
 
+-- general remaps
 
-vim.cmd[[colorscheme tokyonight]]
+
+vim.cmd[[colorscheme iceberg]]
 vim.cmd("highlight Normal guibg=none")
 vim.cmd("highlight NonText guibg=none")
 vim.cmd("highlight LineNr guibg=none")
 vim.cmd("highlight Folded guibg=none")
 vim.cmd("highlight EndOfBuffer guibg=none")
-
